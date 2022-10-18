@@ -45,7 +45,7 @@ void Player::CreatePlayerDirectory(System::String^ directoryName, int playerNum,
 		WritePlayersToFile((directoryName+"\\"+ fileName), roundNum, i);
 	}
 	
-}
+}	
 void Player::DeleteDirectory(System::String^ directoryName) {
 	// deletes directory at end of game
 	System::IO::DirectoryInfo^ di = gcnew System::IO::DirectoryInfo(directoryName);
@@ -77,7 +77,7 @@ void Player::WriteScoreToFile(System::String^ fileName, unsigned int roundNum, i
 	
 	streamWriter->Close();
 }
-	//void GetRightLeftCurrentPlayer(System::String^ fileName, unsigned int currentPlayerNum) {
+	//void GetRightLeftCurrentPlayer(unsigned int currentPlayerNum) {
 
 //}
 //void Player::EditFileUpdatedScores(System::String^ fileName, Player^ currentPlayer, Player^ rightPlayer, Player^ leftPlayer, unsigned int currentRoundNum) {

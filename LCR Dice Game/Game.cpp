@@ -35,18 +35,23 @@ void Game::Play() {
 	
 
 	// game loop
+	//		currentPlayer = for loop i num
 	//		Checks chips (print current chips)
 	//		Rolls dice (print dice based on chip num)
 	//		Exchanges chips (0-2 current player looses chips)
 	//		check for winner (
 	//		
-	/*do {
-		
+	do {
+		for (int i = 0; i < numPlayers; i++) {
+			System::String^ currentPlayer = (i + 1).ToString();
+			System::Console::WriteLine("Player {0}", currentPlayer);
 
 
+			
+		}
 
 		endLoop = 1;
-	} while (endLoop == 0);*/
+	} while (endLoop == 0);
 }
 
 

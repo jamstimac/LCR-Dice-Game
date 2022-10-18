@@ -19,7 +19,7 @@ public:
 	void DeleteDirectory(System::String^ directoryName);
 	void WritePlayersToFile(System::String^ fileName, unsigned int playerNum, int i);
 	void WriteScoreToFile(System::String^ fileName, unsigned int roundNum, int i, Player^ currentPlayer);
-	//void GetRightLeftCurrentPlayer(System::String^ fileName);
+	//void GetRightLeftCurrentPlayer(int currentPlayerNum);
 	//void EditFileUpdatedScores(System::String^ fileName, Player^ currentPlayer, Player^ rightPlayer, Player^ leftPlayer, unsigned int currentRoundNum);
 
 private:
