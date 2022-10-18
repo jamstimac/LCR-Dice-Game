@@ -9,12 +9,14 @@ public:
 
 	// functions
 	void Play();
-	void WelcomePlayer(System::String^ introFile);
-	
+	void WelcomePlayer(System::String^ fileName);
+	int GetNumPlayers();
+
 	// vairables
-	// unsigned int numRolls;
-
-
+	unsigned int numRolls;
+	unsigned int numPlayers;
+	System::String^ userInput;
+	
 };
 
 

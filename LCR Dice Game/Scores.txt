@@ -1,0 +1,39 @@
+LCR Scores: 
+Format:
+	
+	Name:
+	Round 0
+	Score:
+	Still in: (1 for yes, 0 for no)
+
+Players:
+
+	Name: f
+	Score: 3
+	Still in: 1
+
+
+	Name: d
+	Score: 3
+	Still in: 1
+
+
+	Name: s
+	Score: 3
+	Still in: 1
+
+
+	Name: a
+	Score: 3
+	Still in: 1
+
+
+	Name: w
+	Score: 3
+	Still in: 1
+
+
+	Name: e
+	Score: 3
+	Still in: 1
+

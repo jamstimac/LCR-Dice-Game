@@ -2,30 +2,62 @@
 #include "Game.h"
 
 Game::Game() {
-	System::Console::WriteLine("Game::.CTOR");
+	//System::Console::WriteLine("Game::.CTOR");
 };
 
 void Game::Play() {
-	System::Console::WriteLine("Instance: Game::Play()");
+	// constructor seeds srand()
+	Dice^ dice = gcnew Dice();
+	Player^ player = gcnew Player();
+
+	// function variables
+	System::String^ introFile = "GameIntro.txt";
+	System::String^ scoresFile = "Scores.txt";
+	unsigned int roundNum = 0;
+
+	// welcome player get numPlayers
+	WelcomePlayer(introFile);
+	numPlayers = GetNumPlayers();
+
 	
-    Dice^ dice = gcnew Dice();
+	// get names of each player and initialize each player into a save file
+	player->WritePlayersToFile(scoresFile, roundNum, numPlayers);
 
-    System::Console::WriteLine("Hello.");
+	roundNum = 1;
+	player->EditFileUpdatedScores(scoresFile, roundNum);
+	/*do {
+		
 
-    int diceRoll1, diceRoll2;
-    diceRoll1 = dice->Roll();
-    diceRoll2 = dice->Roll();
 
-    System::Console::WriteLine("First roll: {0} Second roll: {1}", diceRoll1, diceRoll2);
-    System::String^ name = "Jerry";
-
-    Player^ player = gcnew Player();
-
-	WelcomePlayer();
-
+	} while (endLoop == 0);*/
 }
 
-void Game::WelcomePlayer(System::String^ introFile) {
+int Game::GetNumPlayers() {
+	/// <summary>
+	/// Initializes numPlayers, then runs a do loop to get a number of players
+	/// above 3. Catches both out of bounds exceptions and others.
+	/// </summary>
+	numPlayers = 0;
+
+	System::Console::WriteLine("How many people are playing?");
+	do {
+		userInput = System::Console::ReadLine();
+		try {
+			numPlayers = int::Parse(userInput);
+			if (numPlayers < 3) {
+				System::Console::WriteLine("You must have at least 3 players.");
+			}
+		}
+		catch (System::FormatException^ e) {
+			System::Console::WriteLine("Please enter a number 3 or more.");
+		}
+		
+	} while (numPlayers < STARTING_NUM_CHIPS_AND_PlAYERS);
+
+	return numPlayers;
+}
+
+void Game::WelcomePlayer(System::String^ fileName) {
 	/// <summary>
 	/// Welcomes the player to the game
 	/// reads intro paragraphs from .txt file
@@ -34,18 +66,19 @@ void Game::WelcomePlayer(System::String^ introFile) {
 	/// https://learn.microsoft.com/en-us/cpp/dotnet/file-handling-and-i-o-cpp-cli?view=msvc-170&viewFallbackFrom=vs-2017#read_text
 	/// </summary>
 
-	System::String^ fileName = "GameIntro.txt";
 	try
 	{
-		System::IO::StreamReader^ strmrd = System::IO::File::OpenText(fileName);
+		System::IO::StreamReader^ streamReader= System::IO::File::OpenText(fileName);
 
 		System::String^ str;
 		int count = 0;
-		while ((str = strmrd->ReadLine()) != nullptr)
+		while ((str = streamReader->ReadLine()) != nullptr)
 		{
 			count++;
 			System::Console::WriteLine(str);
 		}
+
+		System::Console::WriteLine();
 	}
 	catch (System::Exception^ e)
 	{
@@ -56,6 +89,5 @@ void Game::WelcomePlayer(System::String^ introFile) {
 	}
 
 }
-
 
 
