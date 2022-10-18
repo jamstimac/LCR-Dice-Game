@@ -33,8 +33,8 @@ bool Player::GetHasChips() {
 	return hasChips;
 }
 
-void Player::CreatePlayerDirectory(System::String^ directoryName, int playerNum, unsigned int roundNum) {
-	System::IO::DirectoryInfo^ di = gcnew System::IO::DirectoryInfo(directoryName);
+void Player::CreatePlayerDirectory(int playerNum, unsigned int roundNum) {
+	System::IO::DirectoryInfo^ di = gcnew System::IO::DirectoryInfo(DIRECTORY_NAME);
 	
 	di->Create();
 	System::String^ fileName;
@@ -42,7 +42,7 @@ void Player::CreatePlayerDirectory(System::String^ directoryName, int playerNum,
 		int currentPlayer = i + 1;
 		fileName = ("{0}.txt", currentPlayer.ToString());
 
-		WritePlayersToFile((directoryName+"\\"+ fileName), roundNum, i);
+		WritePlayersToFile((DIRECTORY_NAME+PATH_TOKEN+fileName), roundNum, i);
 	}
 	
 }	

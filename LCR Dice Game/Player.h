@@ -15,7 +15,7 @@ public:
 	unsigned int GetChipCount();
 	void SetHasChips();
 	bool GetHasChips();
-	void CreatePlayerDirectory(System::String^ directoryName, int playerNum, unsigned int roundNum);
+	void CreatePlayerDirectory(int playerNum, unsigned int roundNum);
 	void DeleteDirectory(System::String^ directoryName);
 	void WritePlayersToFile(System::String^ fileName, unsigned int playerNum, int i);
 	void WriteScoreToFile(System::String^ fileName, unsigned int roundNum, int i, Player^ currentPlayer);
