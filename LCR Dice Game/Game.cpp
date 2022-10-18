@@ -32,6 +32,41 @@ void Game::Play() {
 	} while (endLoop == 0);*/
 }
 
+
+void Game::WelcomePlayer(System::String^ fileName) {
+	/// <summary>
+	/// Welcomes the player to the game
+	/// reads intro paragraphs from .txt file
+	/// 
+	/// pulls function design from 
+	/// https://learn.microsoft.com/en-us/cpp/dotnet/file-handling-and-i-o-cpp-cli?view=msvc-170&viewFallbackFrom=vs-2017#read_text
+	/// </summary>
+
+	try
+	{
+		System::IO::StreamReader^ streamReader = System::IO::File::OpenText(fileName);
+
+		System::String^ str;
+		int count = 0;
+		while ((str = streamReader->ReadLine()) != nullptr)
+		{
+			count++;
+			System::Console::WriteLine(str);
+		}
+
+		System::Console::WriteLine();
+	}
+	catch (System::Exception^ e)
+	{
+		if (dynamic_cast<System::IO::FileNotFoundException^>(e))
+			System::Console::WriteLine("file '{0}' not found", fileName);
+		else
+			System::Console::WriteLine("problem reading file '{0}'", fileName);
+	}
+
+}
+
+
 int Game::GetNumPlayers() {
 	/// <summary>
 	/// Initializes numPlayers, then runs a do loop to get a number of players
@@ -55,39 +90,6 @@ int Game::GetNumPlayers() {
 	} while (numPlayers < STARTING_NUM_CHIPS_AND_PlAYERS);
 
 	return numPlayers;
-}
-
-void Game::WelcomePlayer(System::String^ fileName) {
-	/// <summary>
-	/// Welcomes the player to the game
-	/// reads intro paragraphs from .txt file
-	/// 
-	/// pulls function design from 
-	/// https://learn.microsoft.com/en-us/cpp/dotnet/file-handling-and-i-o-cpp-cli?view=msvc-170&viewFallbackFrom=vs-2017#read_text
-	/// </summary>
-
-	try
-	{
-		System::IO::StreamReader^ streamReader= System::IO::File::OpenText(fileName);
-
-		System::String^ str;
-		int count = 0;
-		while ((str = streamReader->ReadLine()) != nullptr)
-		{
-			count++;
-			System::Console::WriteLine(str);
-		}
-
-		System::Console::WriteLine();
-	}
-	catch (System::Exception^ e)
-	{
-		if (dynamic_cast<System::IO::FileNotFoundException^>(e))
-			System::Console::WriteLine("file '{0}' not found", fileName);
-		else
-			System::Console::WriteLine("problem reading file '{0}'", fileName);
-	}
-
 }
 
 

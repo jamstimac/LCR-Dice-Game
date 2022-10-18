@@ -29,7 +29,9 @@ bool Player::GetHasChips() {
 }
 
 void Player::WritePlayersToFile(System::String^ fileName, unsigned int roundNum, unsigned int playerNum) {
-
+	/// Functionality pulled from 
+	/// https://learn.microsoft.com/en-us/cpp/dotnet/file-handling-and-i-o-cpp-cli?view=msvc-170&viewFallbackFrom=vs-2017#retrieve
+	
 	System::IO::StreamWriter^ streamWriter = gcnew System::IO::StreamWriter(fileName);
 
 	streamWriter->WriteLine("LCR Scores: \nFormat:\n\t\n\tName:\n\tRound {0}\n\tScore:\n\tStill in: (1 for yes, 0 for no)\n\nPlayers:",roundNum);
@@ -46,6 +48,9 @@ void Player::WritePlayersToFile(System::String^ fileName, unsigned int roundNum,
 
 }
 void Player::EditFileUpdatedScores(System::String^ fileName, unsigned int currentRoundNum) {
+	/// functionality pulled from
+	/// https://learn.microsoft.com/en-us/cpp/dotnet/file-handling-and-i-o-cpp-cli?view=msvc-170&viewFallbackFrom=vs-2017#retrieve
+
 	array<System::String^>^ args = System::Environment::GetCommandLineArgs();
 	if (args->Length < 2)
 	{
