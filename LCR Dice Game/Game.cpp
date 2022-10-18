@@ -30,6 +30,7 @@ void Game::Play() {
 	
 	// get names of each player and initialize each player into a save file
 	// directory allows access to each players file individually
+	// directory file names are based on numPlayer (for loop int i + 1) per player
 	player->CreatePlayerDirectory(directoryName, numPlayers, roundNum);
 	
 
