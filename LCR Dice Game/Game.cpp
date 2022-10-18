@@ -51,9 +51,9 @@ void Game::Play() {
 		// game for loop
 		for (int i = 0; i < numPlayers; i++) {
 			System::String^ currentPlayer = (i + 1).ToString();
-			System::Console::WriteLine("Player {0}", currentPlayer);
+			System::Console::WriteLine("\nPlayer {0}", currentPlayer);
 
-			GetRightLeftAndCurrentPlayer(di, dice, player, i, numPlayers);
+			GetRightLeftAndCurrentPlayer(di, dice, player, roundNum, i, numPlayers);
 			
 
 
@@ -65,6 +65,7 @@ void Game::Play() {
 		endLoop = 1;
 	} while (endLoop == 0);
 }
+
 
 
 void Game::WelcomePlayer(System::String^ fileName) {
@@ -101,7 +102,7 @@ void Game::WelcomePlayer(System::String^ fileName) {
 }
 
 void Game::PauseTurn() {
-	System::Console::WriteLine("\n\nPress [enter] to continue!");
+	System::Console::WriteLine("\nPress [enter] to continue!");
 	System::Console::ReadLine();
 }
 
@@ -131,7 +132,7 @@ int Game::GetNumPlayers() {
 }
 
 
-void Game::GetRightLeftAndCurrentPlayer(System::IO::DirectoryInfo^ di, Dice^ dice, Player^ player, int currentPlayerNum, int numPlayers) {
+void Game::GetRightLeftAndCurrentPlayer(System::IO::DirectoryInfo^ di, Dice^ dice, Player^ player, int roundNum, int currentPlayerNum, int numPlayers) {
 	/// <summary>
 	///
 	/// </summary>
@@ -162,17 +163,20 @@ void Game::GetRightLeftAndCurrentPlayer(System::IO::DirectoryInfo^ di, Dice^ dic
 	System::IO::StreamReader^ srRightPlayer = gcnew System::IO::StreamReader(fileNameRP);
 	System::IO::StreamReader^ srLeftPlayer = gcnew System::IO::StreamReader(fileNameLP);
 
-	CheckChipsRollUpdateScores(dice, player, srCurrentPlayer, srRightPlayer, srLeftPlayer);
+	CheckChipsRollUpdateScores(roundNum, dice, player, srCurrentPlayer, srRightPlayer, srLeftPlayer);
 
+	srCurrentPlayer->Close();
+	srRightPlayer->Close();
+	srLeftPlayer->Close();
 }
 
-void Game::CheckChipsRollUpdateScores(Dice^ dice, Player^ player, System::IO::StreamReader^ srCP, System::IO::StreamReader^ srRP, System::IO::StreamReader^ srLP) {
+void Game::CheckChipsRollUpdateScores(int roundNum, Dice^ dice, Player^ player, System::IO::StreamReader^ srCP, System::IO::StreamReader^ srRP, System::IO::StreamReader^ srLP) {
 	
 	int rollsCurrentPlayer = GetChipCountReturnRolls(srCP, player);
 	int diceRoll = 0;
 	bool canRoll = (rollsCurrentPlayer > 0);
 
-	System::Console::WriteLine("Welcome player {0} You have {1} chips.", player->GetPlayerName(), rollsCurrentPlayer.ToString());
+	System::Console::WriteLine("\nWelcome{0} You have{1} chips.", player->GetPlayerName(), rollsCurrentPlayer.ToString());
 	
 	if (canRoll) {
 		for (int i = 0; i < rollsCurrentPlayer; i++) {
@@ -180,17 +184,17 @@ void Game::CheckChipsRollUpdateScores(Dice^ dice, Player^ player, System::IO::St
 			diceRoll = dice->Roll();
 			dice->PrintSide(diceRoll);
 			
-			// player->changechips();
+			player->ChangeScores(diceRoll, roundNum, srCP, srRP,srLP);
 			
 			PauseTurn();
 		}
-
+		System::Console::WriteLine("\nTime for the next player to roll.");
 	}
 	else {
 		// pass turn
 		System::Console::WriteLine();
 		System::Console::WriteLine("You currently don't have chips! Keep at it, if you get chips this next round you can play again!");
-		System::Console::WriteLine("Passing dice to next player");
+		System::Console::WriteLine("Passing dice to next player\n");
 		return;
 	}
 

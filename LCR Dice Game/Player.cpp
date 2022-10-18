@@ -48,36 +48,36 @@ void Player::WriteFilesToPlayerDirectory(System::IO::DirectoryInfo^ di, int play
 	}
 	
 }
-void Player::WritePlayersToFile(System::String^ fileName, int playerNum, int roundNum) {
+void Player::WritePlayersToFile(System::String^ fileName,int playerNum, int roundNum) {
 	/// Functionality pulled from 
 	/// https://learn.microsoft.com/en-us/cpp/dotnet/file-handling-and-i-o-cpp-cli?view=msvc-170&viewFallbackFrom=vs-2017#retrieve
 	
 	System::IO::StreamWriter^ streamWriter = gcnew System::IO::StreamWriter(fileName);
 
-	System::Console::WriteLine("Please enter player {0}'s name: ", (playerNum + 1));
+	System::Console::WriteLine("\nPlease enter player {0}'s name: ", (playerNum + 1));
 	SetPlayerName();
 
-	streamWriter->WriteLine("Round {0}\n\tPlayerNum: {1}\n\tName: {2}\n\tScore: {3}\n\tStill in: 1\n",roundNum, (playerNum+1), name, chipCount);
+	streamWriter->WriteLine("Round {0}\n\tName: {2}\n\tScore: {3}\n\tStill in: 1\n",roundNum, name, chipCount);
 
 	streamWriter->Close();
 
 }
-void Player::WriteScoreToFile(System::String^ fileName, int playerNum, Player^ currentPlayer, int roundNum) {
-	System::IO::StreamWriter^ streamWriter = gcnew System::IO::StreamWriter(fileName);
+void Player::WriteScoreToFile(System::IO::StreamWriter^ srCP, int roundNum) {
 
-	int hasChips = (currentPlayer->GetHasChips()) ? 1 : 0;
+	int hasChips = (GetHasChips()) ? 1 : 0;
+	 
+	srCP->WriteLine("\n\nRound {0}\n\tName: {2}\n\tScore: {3}\n\tStill in: {4}\n", roundNum, GetPlayerName(), GetChipCount(), hasChips);
 
-	streamWriter->WriteLine("\n\nRound {0}\n\tPlayerNum: {1}\n\tName: {2}\n\tScore: {3}\n\tStill in: {4}\n", roundNum, (playerNum+1), currentPlayer->GetPlayerName(), currentPlayer->GetChipCount(), hasChips);
-	
-	streamWriter->Close();
+
 }
 
-void Player::ChangeScores(int diceRoll, Player^ player, System::IO::StreamWriter srCP, System::IO::StreamWriter srRP, System::IO::StreamWriter srLP) {
+void Player::ChangeScores(int diceRoll, int roundNum, System::IO::StreamWriter^ srCP, System::IO::StreamWriter^ srRP, System::IO::StreamWriter^ srLP) {
 	int currentChips = this->GetChipCount();
+	
 
 	// rolled L
 	if (diceRoll == 0) {
-		// give one chip to player to left
+		WriteScoreToFile(srLP, roundNum);
 		// take one chip from current player chip count
 		currentChips--;
 		// print dice
@@ -86,7 +86,7 @@ void Player::ChangeScores(int diceRoll, Player^ player, System::IO::StreamWriter
 	}
 	// rolled R
 	else if (diceRoll == 1) {
-		// give one chip to player to the right
+		WriteScoreToFile(srRP, roundNum);
 		// take one chip from current player chip count
 		currentChips--;
 		// print dice
@@ -104,13 +104,11 @@ void Player::ChangeScores(int diceRoll, Player^ player, System::IO::StreamWriter
 	// rolled * (no change to chip counts)
 	else {
 		// print dice
-		System::Console::WriteLine("You still have {} chips.\n");
+		System::Console::WriteLine("You still have {0} chips.\n", this->GetChipCount());
 	}
 	this->SetChipCount(currentChips);
+	WriteScoreToFile(srCP, roundNum);
 	System::Console::WriteLine(currentChips.ToString());
 }
 
-void Player::GiveChipsSaceScores(System::IO::StreamReader srCP, System::IO::StreamReader srOtherP, Player^ player) {
-
-}
 
