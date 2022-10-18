@@ -5,26 +5,25 @@
 ref class Player {
 public:
 	// constructor
-	Player();
 	Player(System::String^ enteredName, int chips);
 
 	// functions
 	void SetPlayerName();
+	void EnterPlayerName(System::String^ enteredName);
 	System::String^ GetPlayerName();
-	void SetChipCount(unsigned int chips);
+	void SetChipCount(int chips);
 	unsigned int GetChipCount();
 	void SetHasChips();
+	void EnterHasChips(bool zeroOrOne);
 	bool GetHasChips();
-	void CreatePlayerDirectory(int playerNum, unsigned int roundNum);
-	void DeleteDirectory(System::String^ directoryName);
-	void WritePlayersToFile(System::String^ fileName, unsigned int playerNum, int i);
-	void WriteScoreToFile(System::String^ fileName, unsigned int roundNum, int i, Player^ currentPlayer);
-	//void GetRightLeftCurrentPlayer(int currentPlayerNum);
-	//void EditFileUpdatedScores(System::String^ fileName, Player^ currentPlayer, Player^ rightPlayer, Player^ leftPlayer, unsigned int currentRoundNum);
-
+	void WriteFilesToPlayerDirectory(System::IO::DirectoryInfo^ di, int playerNum, int roundNum);
+	void DeleteDirectory();
+	void WritePlayersToFile(System::String^ fileName, int i, int roundNum);
+	void WriteScoreToFile(System::String^ fileName, int i, Player^ currentPlayer, int roundNum);
+	
 private:
 	System::String^ name;
-	unsigned int chipCount;
+	int chipCount;
 	bool hasChips;
 };
 

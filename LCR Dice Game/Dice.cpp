@@ -9,3 +9,4 @@ Dice::Dice() {
 int Dice::Roll() {
 	return (rand() % NUM_SIDES);
 }
+

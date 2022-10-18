@@ -7,5 +7,6 @@ ref class Dice {
 public:
 	Dice();
 	int Roll();
+	
 };
 

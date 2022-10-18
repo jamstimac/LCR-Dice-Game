@@ -1,15 +1,6 @@
-LCR Scores:m
-Format:
-	PlayerNum:
-	Name:
-	Score:
-	Still in: (1 for yes, 0 for no)
-
 Round 0
-
 	PlayerNum: 3
-	Name: 
-	Round 0
+	Name: a
 	Score: 3
 	Still in: 1
 
