@@ -2,13 +2,16 @@
 #include "Game.h"
 
 Game::Game() {
-
+	
 };
 
 void Game::Play() {
 	// constructor seeds srand()
 	Dice^ dice = gcnew Dice();
 	Player^ player = gcnew Player("", 3);
+
+	// array of dice sides required for printing dice.
+	char diceArray[NUM_SIDES] = { 'L', 'R', 'C', '*',  '*', '*' };
 
 	// creates directory that will hold all player info
 	System::IO::DirectoryInfo^ di = gcnew System::IO::DirectoryInfo(DIRECTORY_NAME);
@@ -50,8 +53,13 @@ void Game::Play() {
 			System::String^ currentPlayer = (i + 1).ToString();
 			System::Console::WriteLine("Player {0}", currentPlayer);
 
-			GetRightLeftAndCurrentPlayer(di, dice, player, i, numPlayers);
+			GetRightLeftAndCurrentPlayer(diceArray, di, dice, player, i, numPlayers);
 			
+
+
+			// allows user a second to read results
+			// press enter to continue
+			PassTurn();			
 		}
 		// check for winner
 		endLoop = 1;
@@ -92,6 +100,10 @@ void Game::WelcomePlayer(System::String^ fileName) {
 
 }
 
+void Game::PassTurn() {
+	System::Console::WriteLine("\n\nPress [enter] to continue to next players turn!");
+	System::Console::ReadLine();
+}
 
 int Game::GetNumPlayers() {
 	/// <summary>
@@ -119,7 +131,7 @@ int Game::GetNumPlayers() {
 }
 
 
-void Game::GetRightLeftAndCurrentPlayer(System::IO::DirectoryInfo^ di, Dice^ dice, Player^ player, int currentPlayerNum, int numPlayers) {
+void Game::GetRightLeftAndCurrentPlayer(char diceArray[], System::IO::DirectoryInfo^ di, Dice^ dice, Player^ player, int currentPlayerNum, int numPlayers) {
 	/// <summary>
 	///
 	/// </summary>
@@ -150,11 +162,11 @@ void Game::GetRightLeftAndCurrentPlayer(System::IO::DirectoryInfo^ di, Dice^ dic
 	System::IO::StreamReader^ srRightPlayer = gcnew System::IO::StreamReader(fileNameRP);
 	System::IO::StreamReader^ srLeftPlayer = gcnew System::IO::StreamReader(fileNameLP);
 
-	CheckChipsRollUpdateScores(dice, player, srCurrentPlayer, srRightPlayer, srLeftPlayer);
+	CheckChipsRollUpdateScores(diceArray, dice, player, srCurrentPlayer, srRightPlayer, srLeftPlayer);
 
 }
 
-void Game::CheckChipsRollUpdateScores(Dice^ dice, Player^ player, System::IO::StreamReader^ srCP, System::IO::StreamReader^ srRP, System::IO::StreamReader^ srLP) {
+void Game::CheckChipsRollUpdateScores(char diceArray[], Dice^ dice, Player^ player, System::IO::StreamReader^ srCP, System::IO::StreamReader^ srRP, System::IO::StreamReader^ srLP) {
 	
 	int rollsCurrentPlayer = GetChipCountReturnRolls(srCP, player);
 	System::Console::WriteLine(player->GetPlayerName());
@@ -164,6 +176,7 @@ void Game::CheckChipsRollUpdateScores(Dice^ dice, Player^ player, System::IO::St
 	if (canRoll) {
 		for (int i = 0; i < rollsCurrentPlayer; i++) {
 			diceRoll = dice->Roll();
+			dice->PrintSide(diceRoll, diceArray);
 			System::Console::WriteLine("diceroll: {0}", diceRoll.ToString());
 			
 		}

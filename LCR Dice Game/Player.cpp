@@ -62,6 +62,43 @@ void Player::WritePlayersToFile(System::String^ fileName, int playerNum, int rou
 	streamWriter->Close();
 
 }
+void Player::ChangeScores(int diceRoll, Player^ player, System::IO::StreamWriter srCP, System::IO::StreamWriter srRP, System::IO::StreamWriter srLP) {
+	int currentChips = this->GetChipCount();
+
+	// rolled L
+	if (diceRoll == 0) {
+		// give one chip to player to left
+		// take one chip from current player chip count
+		currentChips--;
+		// print dice
+		System::Console::WriteLine("You gave a chip to the left, ");
+		System::Console::WriteLine("Chip Count now: {0}\n", this->GetChipCount());
+	}
+	// rolled R
+	else if (diceRoll == 1) {
+		// give one chip to player to the right
+		// take one chip from current player chip count
+		currentChips--;
+		// print dice
+		System::Console::WriteLine("You gave a chip to the right, ");
+		System::Console::WriteLine("Chip Count now: {0}\n", this->GetChipCount());
+	}
+	// rolled C
+	else if (diceRoll == 2) {
+		// take one chip from current player chip count
+		currentChips--;
+		// print dice
+		System::Console::WriteLine("You gave a chip to the bank, ");
+		System::Console::WriteLine("Chip Count now: {0}\n", this->GetChipCount());
+	}
+	// rolled * (no change to chip counts)
+	else {
+		// print dice
+		System::Console::WriteLine("You still have {} chips.\n");
+	}
+	this->SetChipCount(currentChips);
+	System::Console::WriteLine(currentChips.ToString());
+}
 
 void Player::WriteScoreToFile(System::String^ fileName, int playerNum, Player^ currentPlayer, int roundNum) {
 	System::IO::StreamWriter^ streamWriter = gcnew System::IO::StreamWriter(fileName);

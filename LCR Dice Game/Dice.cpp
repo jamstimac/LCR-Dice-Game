@@ -10,3 +10,9 @@ int Dice::Roll() {
 	return (rand() % NUM_SIDES);
 }
 
+void PrintSide(int diceRoll, char diceArray[]) {
+	// print dice
+	System::Console::WriteLine(" --- ");
+	System::Console::WriteLine("| {0} |", diceArray[diceRoll]);
+	System::Console::WriteLine(" --- ");
+}
