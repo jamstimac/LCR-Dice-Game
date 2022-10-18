@@ -1,0 +1,9 @@
+Welcome to LCR!
+
+This game has three dice that are rolled to decide where chips end up!
+If you roll an L or R you give chips to the player to your left or right.
+If you roll a C you give chips to the bank and they leave the field of play.
+Finally, if you roll a '*' you keep your chips! Lucky you!.
+The winner is the last player to have chips. Good luck and have fun!
+
+To play you need 3 or more players.
