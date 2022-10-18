@@ -1,7 +1,7 @@
 #pragma once
 
 #include "pch.h"
-#include <ctime>
+#include <time.h>
 
 ref class Dice {
 public:

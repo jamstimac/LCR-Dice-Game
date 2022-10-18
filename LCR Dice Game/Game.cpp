@@ -157,13 +157,15 @@ void Game::GetRightLeftAndCurrentPlayer(System::IO::DirectoryInfo^ di, Dice^ dic
 void Game::CheckChipsRollUpdateScores(Dice^ dice, Player^ player, System::IO::StreamReader^ srCP, System::IO::StreamReader^ srRP, System::IO::StreamReader^ srLP) {
 	
 	int rollsCurrentPlayer = GetChipCountReturnRolls(srCP, player);
-
+	System::Console::WriteLine(player->GetPlayerName());
+	System::Console::WriteLine("num rolls {0}", rollsCurrentPlayer.ToString());
+	int diceRoll = 0;
 	bool canRoll = (rollsCurrentPlayer > 0);
 	if (canRoll) {
 		for (int i = 0; i < rollsCurrentPlayer; i++) {
-			int diceRoll = dice->Roll();
-			System::Console::WriteLine(diceRoll);
-			//player->WriteScoreToFile(
+			diceRoll = dice->Roll();
+			System::Console::WriteLine("diceroll: {0}", diceRoll.ToString());
+			
 		}
 
 	}
@@ -183,39 +185,69 @@ int Game::GetChipCountReturnRolls(System::IO::StreamReader^ srAffectedPlayer, Pl
 	/// <summary> 
 	/// reads from file info on current player enters their info into Player class
 	/// returns num rolls based on chip count
+	/// 
+	/// also sets player class with current player info, necessary for later.
 	///<\summary>
 	System::String^ line;
 	int rolls = 0;
+	System::String^ nameLine;
+	System::String^ scoreLine;
+	System::String^ hasChipsLine;
+
 	while ((line = srAffectedPlayer->ReadLine()) != nullptr) {
-		if (line->CompareTo("\tName: ") == 0) {
-			line = line->Substring(6);
-			player->EnterPlayerName(line);
-			System::Console::WriteLine(line);
+		
+		try {
+			//System::Console::WriteLine("atempting to read player name");
+			nameLine = line->Substring(0, 7);
+			if (nameLine->CompareTo("\tName: ") == 0) {
+				line = line->Substring(7);
+				player->EnterPlayerName(line);
+				//System::Console::WriteLine("Name: {0}", line);
+			}
+			
 		}
-		if (line->CompareTo("\tScore: ")) {
-			line = line->Substring(6);
-			int chips = int::Parse(line);
-			player->SetChipCount(chips);
-			System::Console::WriteLine(line);
-			if (player->GetChipCount() < 1) {
-				// player does not have chips, player cannot continue turn
-				player->EnterHasChips(false);
-				
-				rolls = 0;
-				return rolls;
+		catch (System::NullReferenceException^ e) {}
+		catch (...) {}
+
+		try {
+			//System::Console::WriteLine("atempting to read player chipCount");
+			hasChipsLine = line->Substring(0, 11);
+			if (hasChipsLine->CompareTo("\tStill in: ") == 0) {
+				line = line->Substring(11);
+				int zeroOrOne = int::Parse(line);
+				//System::Console::WriteLine("1 for yes, 0 for no; {0}", line);
+				if (zeroOrOne == 0) {
+					player->EnterHasChips(false);
+				}
+				else {
+					player->EnterHasChips(true);
+				}
+				System::Console::WriteLine(line);
 			}
 		}
-		if (line->CompareTo("\tStill in: ")) {
-			line = line->Substring(10);
-			int zeroOrOne = int::Parse(line);
-			if (zeroOrOne == 0) {
-				player->EnterHasChips(false);
+		catch (System::NullReferenceException^ e) {}
+		catch (...) {}
+
+
+		try {
+			//System::Console::WriteLine("atempting to read player score");
+			scoreLine = line->Substring(0, 8);
+			if (scoreLine->CompareTo("\tScore: ") == 0) {
+				line = line->Substring(8);
+				int chips = int::Parse(line);
+				player->SetChipCount(chips);
+				//System::Console::WriteLine("Current Score: {0}", line);
+				if (player->GetChipCount() < 1) {
+					// player does not have chips, player cannot continue turn
+					player->EnterHasChips(false);
+
+					rolls = 0;
+					return rolls;
+				}
 			}
-			else {
-				player->EnterHasChips(true);
-			}
-			System::Console::WriteLine(line);
 		}
+		catch (System::NullReferenceException^ e) {}
+		catch (...) {}
 
 		rolls = (player->GetChipCount() > 3) ? 3 : player->GetChipCount();
 	}
