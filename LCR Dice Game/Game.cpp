@@ -10,25 +10,41 @@ void Game::Play() {
 	Dice^ dice = gcnew Dice();
 	Player^ player = gcnew Player();
 
+
+
 	// function variables
 	System::String^ introFile = "GameIntro.txt";
-	System::String^ scoresFile = "Scores.txt";
+	System::String^ directoryName = "PlayerDir";
 	unsigned int roundNum = 0;
+	int endLoop = 0;
+
+
+	
 
 	// welcome player get numPlayers
 	WelcomePlayer(introFile);
 	numPlayers = GetNumPlayers();
 
 	
-	// get names of each player and initialize each player into a save file
-	player->WritePlayersToFile(scoresFile, roundNum, numPlayers);
 
-	roundNum = 1;
-	player->EditFileUpdatedScores(scoresFile, roundNum);
+	
+	// get names of each player and initialize each player into a save file
+	// directory allows access to each players file individually
+	player->CreatePlayerDirectory(directoryName, numPlayers, roundNum);
+	
+
+	// game loop
+	//		Checks chips (print current chips)
+	//		Rolls dice (print dice based on chip num)
+	//		Exchanges chips (0-2 current player looses chips)
+	//		check for winner (
+	//		
 	/*do {
 		
 
 
+
+		endLoop = 1;
 	} while (endLoop == 0);*/
 }
 

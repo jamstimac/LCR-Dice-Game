@@ -1,0 +1,15 @@
+LCR Scores:m
+Format:
+	PlayerNum:
+	Name:
+	Score:
+	Still in: (1 for yes, 0 for no)
+
+Round 0
+
+	PlayerNum: 2
+	Name: Jime
+	Round 0
+	Score: 3
+	Still in: 1
+

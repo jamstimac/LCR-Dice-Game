@@ -8,32 +8,17 @@ Format:
 
 Players:
 
-	Name: f
+	Name: Ja
 	Score: 3
 	Still in: 1
 
 
-	Name: d
+	Name: Me
 	Score: 3
 	Still in: 1
 
 
-	Name: s
-	Score: 3
-	Still in: 1
-
-
-	Name: a
-	Score: 3
-	Still in: 1
-
-
-	Name: w
-	Score: 3
-	Still in: 1
-
-
-	Name: e
+	Name: S
 	Score: 3
 	Still in: 1
 

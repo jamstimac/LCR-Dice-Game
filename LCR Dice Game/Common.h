@@ -3,6 +3,7 @@
 #include "pch.h"
 #include <cstdlib>
 #include <string>
+#include <msclr\marshal.h>
 
 #define NUM_SIDES 6
 #define STARTING_NUM_CHIPS_AND_PlAYERS 3
