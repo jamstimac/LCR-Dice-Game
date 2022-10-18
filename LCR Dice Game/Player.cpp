@@ -33,6 +33,11 @@ bool Player::GetHasChips() {
 	return hasChips;
 }
 
+void Player::DeleteDirectory() {
+	// deletes directory at end of game
+	System::IO::DirectoryInfo^ di = gcnew System::IO::DirectoryInfo(DIRECTORY_NAME);
+	di->Delete();
+}
 void Player::WriteFilesToPlayerDirectory(System::IO::DirectoryInfo^ di, int playerNum, int roundNum) {
 	System::String^ fileName;
 	for (int i = 0; i < playerNum; i++) {
@@ -42,11 +47,6 @@ void Player::WriteFilesToPlayerDirectory(System::IO::DirectoryInfo^ di, int play
 		WritePlayersToFile((DIRECTORY_NAME+PATH_TOKEN+fileName), i, roundNum);
 	}
 	
-}	
-void Player::DeleteDirectory() {
-	// deletes directory at end of game
-	System::IO::DirectoryInfo^ di = gcnew System::IO::DirectoryInfo(DIRECTORY_NAME);
-	di->Delete();
 }
 void Player::WritePlayersToFile(System::String^ fileName, int playerNum, int roundNum) {
 	/// Functionality pulled from 
@@ -62,6 +62,16 @@ void Player::WritePlayersToFile(System::String^ fileName, int playerNum, int rou
 	streamWriter->Close();
 
 }
+void Player::WriteScoreToFile(System::String^ fileName, int playerNum, Player^ currentPlayer, int roundNum) {
+	System::IO::StreamWriter^ streamWriter = gcnew System::IO::StreamWriter(fileName);
+
+	int hasChips = (currentPlayer->GetHasChips()) ? 1 : 0;
+
+	streamWriter->WriteLine("\n\nRound {0}\n\tPlayerNum: {1}\n\tName: {2}\n\tScore: {3}\n\tStill in: {4}\n", roundNum, (playerNum+1), currentPlayer->GetPlayerName(), currentPlayer->GetChipCount(), hasChips);
+	
+	streamWriter->Close();
+}
+
 void Player::ChangeScores(int diceRoll, Player^ player, System::IO::StreamWriter srCP, System::IO::StreamWriter srRP, System::IO::StreamWriter srLP) {
 	int currentChips = this->GetChipCount();
 
@@ -100,15 +110,7 @@ void Player::ChangeScores(int diceRoll, Player^ player, System::IO::StreamWriter
 	System::Console::WriteLine(currentChips.ToString());
 }
 
-void Player::WriteScoreToFile(System::String^ fileName, int playerNum, Player^ currentPlayer, int roundNum) {
-	System::IO::StreamWriter^ streamWriter = gcnew System::IO::StreamWriter(fileName);
+void Player::GiveChipsSaceScores(System::IO::StreamReader srCP, System::IO::StreamReader srOtherP, Player^ player) {
 
-	int hasChips = (currentPlayer->GetHasChips()) ? 1 : 0;
-
-	streamWriter->WriteLine("\n\nRound {0}\n\tPlayerNum: {1}\n\tName: {2}\n\tScore: {3}\n\tStill in: {4}\n", roundNum, (playerNum+1), currentPlayer->GetPlayerName(), currentPlayer->GetChipCount(), hasChips);
-	
-	streamWriter->Close();
 }
-
-
 

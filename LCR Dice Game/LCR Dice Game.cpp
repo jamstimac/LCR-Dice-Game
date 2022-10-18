@@ -1,8 +1,14 @@
 #include "pch.h"
+#include "Game.h"
 
 using namespace System;
 
 int main(array<System::String ^> ^args) {
+    Dice^ dice = gcnew Dice();
+    dice->PrintSide(0);
+    dice->PrintSide(1);
+    dice->PrintSide(2);
+    dice->PrintSide(3);
 
     Game^ game = gcnew Game();
 

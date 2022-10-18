@@ -21,7 +21,8 @@ public:
 	void ChangeScores(int diceRoll,Player^ player, System::IO::StreamWriter srCP, System::IO::StreamWriter srRP, System::IO::StreamWriter srLP);
 	void WritePlayersToFile(System::String^ fileName, int i, int roundNum);
 	void WriteScoreToFile(System::String^ fileName, int i, Player^ currentPlayer, int roundNum);
-	
+	void GiveChipsSaceScores(System::IO::StreamReader srCP, System::IO::StreamReader srOtherP, Player^ player);
+
 private:
 	System::String^ name;
 	int chipCount;

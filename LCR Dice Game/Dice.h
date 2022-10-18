@@ -8,7 +8,7 @@ public:
 	
 	Dice();
 	int Roll();
-	void PrintSide(int diceRoll, char diceArray[]);
+	void PrintSide(int diceRoll);
 
 };
 
