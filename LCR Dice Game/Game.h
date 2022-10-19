@@ -13,11 +13,11 @@ public:
 	// functions
 	void Play();
 	void PauseTurn();
-	void WelcomePlayer(System::String^ fileName);
+	void WelcomePlayer();
 	int GetNumPlayers();
-	void GetRightLeftAndCurrentPlayer(System::IO::DirectoryInfo^ di, Dice^ dice, Player^ player,int roundNum, int currentPlayerNum, int numPlayers);
-	void CheckChipsRollUpdateScores(int roundNum, Dice^ dice, Player^ player, System::IO::StreamReader^ srCP, System::IO::StreamReader^ srRP, System::IO::StreamReader^ srLP);
-	int GetChipCountReturnRolls(System::IO::StreamReader^ srAffectedPlayer, Player^ player);
+	void GetRightLeftAndCurrentPlayer(Dice^ dice, Player^ player,int roundNum, int currentPlayerNum, int numPlayers);
+	void CheckChipsRollUpdateScores(int roundNum, Dice^ dice, Player^ player, System::IO::FileInfo^ fiCP, System::IO::FileInfo^ fiRP, System::IO::FileInfo^ fiLP);
+	int GetChipCountReturnRolls(System::IO::FileInfo^ fiAffectedPlayer, Player^ player);
 
 	// vairables
 	int roundNum = 0;
