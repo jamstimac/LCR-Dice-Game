@@ -5,14 +5,14 @@ Game::Game() {
 	
 };
 
+// initializes dice, player and playerArray objects, gets numPlayers, defines array with numPlayer,
+// continues game
 void Game::Play() {
 	// constructor seeds fiand()
 	Dice^ dice = gcnew Dice();
 	Player^ player = gcnew Player("", 3);
 
-	// creates directory that will hold all player info
-	System::IO::DirectoryInfo^ di = gcnew System::IO::DirectoryInfo(DIRECTORY_NAME);
-	di->Create();
+	cli::array<Player^>^ playerArray;
 
 	// function variables
 	int endLoop = 0;
@@ -20,14 +20,11 @@ void Game::Play() {
 	// welcome player get numPlayers
 	WelcomePlayer();
 	numPlayers = GetNumPlayers();
+	playerArray = gcnew cli::array<Player^>(numPlayers);
 
-	// get names of each player and initialize each player into a save file
-	// directory allows access to each players file individually
-	// directory file names are based on numPlayer (for loop int i + 1) per player
-	System::String^ subDirectoryStr = ROUND + (roundNum.ToString());
-	di->CreateSubdirectory(subDirectoryStr);
-	player->WriteFilesToPlayerDirectory(di, numPlayers, roundNum);
-	
+	player->WritePlayersToArray(playerArray, player, numPlayers);
+
+	System::Console::WriteLine();
 
 	// game loop
 	//		currentPlayer = for loop i num
@@ -39,14 +36,12 @@ void Game::Play() {
 	do {
 		// begin new round
 		roundNum++;
-		subDirectoryStr = ROUND + (roundNum.ToString());
-		di->CreateSubdirectory(subDirectoryStr);
 		// game for loop
 		for (int i = 0; i < numPlayers; i++) {
-			System::String^ currentPlayer = (i + 1).ToString();
+			int currentPlayer = (i + 1);
 			System::Console::WriteLine("\nPlayer {0}", currentPlayer);
 
-			GetRightLeftAndCurrentPlayer(dice, player, roundNum, i, numPlayers);
+			GetRightLeftAndCurrentPlayer(dice, player, playerArray, roundNum, currentPlayer, numPlayers);
 			
 
 
@@ -59,50 +54,9 @@ void Game::Play() {
 	} while (endLoop == 0);
 }
 
-
-
-void Game::WelcomePlayer() {
-	/// <summary>
-	/// Welcomes the player to the game
-	/// reads intro paragraphs from .txt file
-	/// 
-	/// pulls function design from 
-	/// https://learn.microsoft.com/en-us/cpp/dotnet/file-handling-and-i-o-cpp-cli?view=msvc-170&viewFallbackFrom=vs-2017#read_text
-	/// </summary>
-	System::Console::WriteLine("GAME::WELCOMEPLAYER");
-
-	System::String^ introFile = "GameIntro.txt";
-	 
-	try
-	{
-		System::IO::FileInfo^ fi = gcnew System::IO::FileInfo(introFile);
-
-		System::String^ str;
-		str = fi->OpenText()->ReadToEnd();
-
-		System::Console::WriteLine(str);
-		System::Console::WriteLine();
-	}
-	catch (System::Exception^ e)
-	{
-		if (dynamic_cast<System::IO::FileNotFoundException^>(e))
-			System::Console::WriteLine("file '{0}' not found", introFile);
-		else
-			System::Console::WriteLine("problem reading file '{0}'", introFile);
-	}
-	
-}
-
-void Game::PauseTurn() {
-	System::Console::WriteLine("\nPress [enter] to continue!");
-	System::Console::ReadLine();
-}
-
+// Initializes numPlayers, then runs a do loop to get a number of players
 int Game::GetNumPlayers() {
-	/// <summary>
-	/// Initializes numPlayers, then runs a do loop to get a number of players
-	/// above 3. Catches both out of bounds exceptions and others.
-	/// </summary>
+
 	System::Console::WriteLine("GAME::GETNUMPLAYERS");
 	numPlayers = 0;
 
@@ -115,7 +69,7 @@ int Game::GetNumPlayers() {
 				System::Console::WriteLine("You must have at least 3 players.");
 			}
 		}
-		catch (System::FormatException^ e) {
+		catch (System::FormatException^) {
 			System::Console::WriteLine("Please enter a number 3 or more.");
 		}
 		
@@ -123,91 +77,46 @@ int Game::GetNumPlayers() {
 
 	return numPlayers;
 }
+//
+// takes player array returns indexes for current left and right player
+// passes dice and player and array objects to following functions
+void Game::GetRightLeftAndCurrentPlayer(Dice^ dice, Player^ player, cli::array<Player^>^ pArray, int roundNum, int currentPlayerNum, int numPlayers) {
 
-
-void Game::GetRightLeftAndCurrentPlayer(Dice^ dice, Player^ player, int roundNum, int currentPlayerNum, int numPlayers) {
-	/// <summary>
-	///
-	/// </summary>
-	/// <param name="di"></param>
-	/// <param name="currentPlayerNum"></param>
-	///										   // if 3 players numbers become 
+	// example::						      // if 3 players, numbers become:
 	System::Console::WriteLine("GAME::GETRIGHTLEFTANDCURRENTPLAYER");
-	int currentPlayer = (currentPlayerNum + 1);// 1, 2, 3
-
-	int leftPlayer = (currentPlayerNum); // 3, 1, 2
+	int currentPlayer = (currentPlayerNum);   // 1, 2, 3
+	System::Console::WriteLine("CurrentPlayer: {0}", currentPlayer);
+	int leftPlayer = (currentPlayerNum - 1);  // 3, 1, 2
 	if (leftPlayer == 0) {
 		leftPlayer = numPlayers;
 	}
-
-	int rightPlayer = (currentPlayerNum + 2); // 2, 3, 1
+	System::Console::WriteLine("LeftPlayer: {0}", leftPlayer);
+	int rightPlayer = (currentPlayerNum + 1); // 2, 3, 1
 	if (rightPlayer > numPlayers) {
 		rightPlayer = 1;
 	}
-	//round num has to be prior to return past scores/names
-	System::String^ roundFolderSRDir = DIRECTORY_NAME + PATH_TOKEN + ROUND + ((roundNum-1).ToString()) + PATH_TOKEN;
-	System::String^ roundFolderSWDir = DIRECTORY_NAME + PATH_TOKEN + ROUND + (roundNum.ToString()) + PATH_TOKEN;
-	// current player's file
-	System::String^ fileNameSRCP = ("{0}.txt", (roundFolderSRDir + currentPlayer.ToString()));
-	System::String^ fileNameSWCP = ("{0}.txt", (roundFolderSWDir + currentPlayer.ToString()));
+	System::Console::WriteLine("RightPlayer: {0}", rightPlayer);
 
-	// right player's file
-	System::String^ fileNameSRRP = ("{0}.txt", (roundFolderSRDir + rightPlayer.ToString()));
-	System::String^ fileNameSWRP = ("{0}.txt", (roundFolderSWDir + rightPlayer.ToString()));
+	CheckChipsRollUpdateScores(dice, player, pArray, currentPlayer, rightPlayer, leftPlayer);
 
-	// left players's file
-	System::String^ fileNameSRLP = ("{0}.txt", (roundFolderSRDir + leftPlayer.ToString()));
-	System::String^ fileNameSWLP = ("{0}.txt", (roundFolderSWDir + leftPlayer.ToString()));
-
-
-	System::IO::StreamReader^ srCurrentPlayer = gcnew System::IO::StreamReader(fileNameSRCP);
-	System::IO::StreamWriter^ swCurrentPlayer = gcnew System::IO::StreamWriter(fileNameSWCP);
-
-	System::IO::StreamReader^ srRightPlayer = gcnew System::IO::StreamReader(fileNameSRRP);
-	System::IO::StreamWriter^ swRightPlayer = gcnew System::IO::StreamWriter(fileNameSWRP);
-
-	System::IO::StreamReader^ srLeftPlayer = gcnew System::IO::StreamReader(fileNameSRLP);
-	System::IO::StreamWriter^ swLeftPlayer = gcnew System::IO::StreamWriter(fileNameSWLP);
-
-	CheckChipsRollUpdateScores(roundNum, dice, player, srCurrentPlayer, srRightPlayer, srLeftPlayer, swCurrentPlayer, swRightPlayer, swLeftPlayer);
-
-	srCurrentPlayer->Close();
-	srRightPlayer->Close();
-	srLeftPlayer->Close();
-
-	swCurrentPlayer->Close();
-	swRightPlayer->Close();
-	swLeftPlayer->Close();
 }
 
-void Game::CheckChipsRollUpdateScores(int roundNum, Dice^ dice, Player^ player, System::IO::StreamReader^ srCP, System::IO::StreamReader^ srRP, System::IO::StreamReader^ srLP, System::IO::StreamWriter^ swCP, System::IO::StreamWriter^ swRP, System::IO::StreamWriter^ swLP) {
+void Game::CheckChipsRollUpdateScores(Dice^ dice, Player^ player, cli::array<Player^>^ pArray, int cpNum, int rpNum, int lpNum) {
 	
 	System::Console::WriteLine("GAME::CHECKCHIPSROLLUPDATESCORES");
 
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="dice"></param>
-	/// <param name="player"></param>
-	/// <param name="srCP"></param>
-	/// <param name="srRP"></param>
-	/// <param name="srLP"></param>
-	
-	// GetChipCountReturnRolls not working... can't find file in directory
-	int rollsCurrentPlayer = GetChipCountReturnRolls(srCP, player);
 	int diceRoll = 0;
-	bool canRoll = (rollsCurrentPlayer > 0);
+	if (pArray[cpNum]->GetHasChips()) {
+		int rollsCurrentPlayer = pArray[cpNum]->ReturnNumRolls();
+		System::Console::WriteLine("\nWelcome {0} You have {1} chips.", pArray[cpNum]->GetPlayerName(), rollsCurrentPlayer);
 
-	System::Console::WriteLine("\nWelcome{0} You have{1} chips.", player->GetPlayerName(), rollsCurrentPlayer.ToString());
-	
-	if (canRoll) {
 		for (int i = 0; i < rollsCurrentPlayer; i++) {
 			System::Console::WriteLine("Roll {0}", (i + 1));
 			diceRoll = dice->Roll();
 			dice->PrintSide(diceRoll);
-			
-			player->ChangeScores(diceRoll, roundNum, srCP, srRP, srLP, swCP, swRP, swLP);
-			
+
+			//player->ChangeScores(diceRoll, pArray, cpNum, rpNum, rpNum);
+
 			PauseTurn();
 		}
 		System::Console::WriteLine("\nTime for the next player to roll.");
@@ -224,19 +133,41 @@ void Game::CheckChipsRollUpdateScores(int roundNum, Dice^ dice, Player^ player, 
 
 }
 
-int Game::GetChipCountReturnRolls(System::IO::StreamReader^ srCP, Player^ player) {
-	/// <summary> 
-	/// reads from file info on current player enters their info into Player class
-	/// returns num rolls based on chip count
+
+
+// reads welcome info from file GameIntro.txt
+void Game::WelcomePlayer() {
+	/// <summary>
+	/// Welcomes the player to the game
+	/// reads intro paragraphs from .txt file
 	/// 
-	/// also sets player class with current player info, necessary for later.
-	///<\summary>
-	System::Console::WriteLine("GAME::GETCHIPCOUNTRETURNROLLS");
-	int rolls = 0;
+	/// pulls function design from 
+	/// https://learn.microsoft.com/en-us/cpp/dotnet/file-handling-and-i-o-cpp-cli?view=msvc-170&viewFallbackFrom=vs-2017#read_text
+	/// </summary>
+	System::Console::WriteLine("GAME::WELCOMEPLAYER");
 
-	player->ReadInfoFromDirectoryFile(srCP);
+	try
+	{
+		System::IO::FileInfo^ fi = gcnew System::IO::FileInfo(INTRO_FILE_NAME);
 
-	rolls = (player->GetChipCount() > 3) ? 3 : player->GetChipCount();
-	return rolls;
+		System::String^ str;
+		str = fi->OpenText()->ReadToEnd();
 
+		System::Console::WriteLine(str);
+		System::Console::WriteLine();
+	}
+	catch (System::Exception^ e)
+	{
+		if (dynamic_cast<System::IO::FileNotFoundException^>(e))
+			System::Console::WriteLine("file '{0}' not found", INTRO_FILE_NAME);
+		else
+			System::Console::WriteLine("problem reading file '{0}'", INTRO_FILE_NAME);
+	}
+
+}
+
+// allows quick use of ReadLine() to pause turn, gives sense of control over dice rolls
+void Game::PauseTurn() {
+	System::Console::WriteLine("\nPress [enter] to continue!");
+	System::Console::ReadLine();
 }

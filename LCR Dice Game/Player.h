@@ -11,17 +11,17 @@ public:
 	void SetPlayerName();
 	void EnterPlayerName(System::String^ enteredName);
 	System::String^ GetPlayerName();
-	void SetChipCount(int chips);
+	void EnterChipCount(int chips);
 	unsigned int GetChipCount();
+	void AddChip();
+	void SubtractChip();
 	void SetHasChips();
 	void EnterHasChips(bool zeroOrOne);
 	bool GetHasChips();
-	void WriteFilesToPlayerDirectory(System::IO::DirectoryInfo^ di, int playerNum, int roundNum);
-	void DeleteDirectory();
-	void ChangeScores(int diceRoll, int roundNum, System::IO::StreamReader^ srCP, System::IO::StreamReader^ srRP, System::IO::StreamReader^ srLP, System::IO::StreamWriter^ swCP, System::IO::StreamWriter^ swRP, System::IO::StreamWriter^ swLP);
-	void WritePlayersToFile(System::String^ fullFilePath, int playerNum, int roundNum);
-	void WriteScoreToFile(System::IO::StreamWriter^ swCP, int roundNum);
-	void ReadInfoFromDirectoryFile(System::IO::StreamReader^ srCP);
+	int ReturnNumRolls();
+	void WritePlayersToArray(array<Player^>^ parray, Player^ player, int playernum);
+	void ChangeScores(int diceRollint diceRoll, cli::array<Player^>^ pArray, int cpNum, int rpNum, int lpNum);
+	//void WriteScoreToFile(System::IO::StreamWriter^ swCP, int roundNum);
 
 private:
 	System::String^ name;
