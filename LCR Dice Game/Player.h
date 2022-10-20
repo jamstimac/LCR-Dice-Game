@@ -18,10 +18,10 @@ public:
 	bool GetHasChips();
 	void WriteFilesToPlayerDirectory(System::IO::DirectoryInfo^ di, int playerNum, int roundNum);
 	void DeleteDirectory();
-	void ChangeScores(int diceRoll, int roundNum, System::IO::FileInfo^ fiCP, System::IO::FileInfo^ fiRP, System::IO::FileInfo^ fiLP);
+	void ChangeScores(int diceRoll, int roundNum, System::IO::StreamReader^ srCP, System::IO::StreamReader^ srRP, System::IO::StreamReader^ srLP, System::IO::StreamWriter^ swCP, System::IO::StreamWriter^ swRP, System::IO::StreamWriter^ swLP);
 	void WritePlayersToFile(System::String^ fullFilePath, int playerNum, int roundNum);
-	void WriteScoreToFile(System::IO::FileInfo^ fiCP, int roundNum);
-	void ReadInfoFromDirectoryFile(System::IO::FileInfo^ fiCP);
+	void WriteScoreToFile(System::IO::StreamWriter^ swCP, int roundNum);
+	void ReadInfoFromDirectoryFile(System::IO::StreamReader^ srCP);
 
 private:
 	System::String^ name;

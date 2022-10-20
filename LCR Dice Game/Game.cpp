@@ -145,24 +145,42 @@ void Game::GetRightLeftAndCurrentPlayer(Dice^ dice, Player^ player, int roundNum
 		rightPlayer = 1;
 	}
 	//round num has to be prior to return past scores/names
-	System::String^ roundFolderDir = DIRECTORY_NAME + PATH_TOKEN + ROUND + ((roundNum-1).ToString()) + PATH_TOKEN;
-
+	System::String^ roundFolderSRDir = DIRECTORY_NAME + PATH_TOKEN + ROUND + ((roundNum-1).ToString()) + PATH_TOKEN;
+	System::String^ roundFolderSWDir = DIRECTORY_NAME + PATH_TOKEN + ROUND + (roundNum.ToString()) + PATH_TOKEN;
 	// current player's file
-	System::String^ fileNameCP = ("{0}.txt", (roundFolderDir + currentPlayer.ToString()));
+	System::String^ fileNameSRCP = ("{0}.txt", (roundFolderSRDir + currentPlayer.ToString()));
+	System::String^ fileNameSWCP = ("{0}.txt", (roundFolderSWDir + currentPlayer.ToString()));
+
 	// right player's file
-	System::String^ fileNameRP = ("{0}.txt", (roundFolderDir + rightPlayer.ToString()));
+	System::String^ fileNameSRRP = ("{0}.txt", (roundFolderSRDir + rightPlayer.ToString()));
+	System::String^ fileNameSWRP = ("{0}.txt", (roundFolderSWDir + rightPlayer.ToString()));
+
 	// left players's file
-	System::String^ fileNameLP = ("{0}.txt", (roundFolderDir + leftPlayer.ToString()));
+	System::String^ fileNameSRLP = ("{0}.txt", (roundFolderSRDir + leftPlayer.ToString()));
+	System::String^ fileNameSWLP = ("{0}.txt", (roundFolderSWDir + leftPlayer.ToString()));
 
-	System::IO::FileInfo^ fiCurrentPlayer = gcnew System::IO::FileInfo(fileNameCP);
-	System::IO::FileInfo^ fiRightPlayer = gcnew System::IO::FileInfo(fileNameRP);
-	System::IO::FileInfo^ fiLeftPlayer = gcnew System::IO::FileInfo(fileNameLP);
 
-	CheckChipsRollUpdateScores(roundNum, dice, player, fiCurrentPlayer, fiRightPlayer, fiLeftPlayer);
+	System::IO::StreamReader^ srCurrentPlayer = gcnew System::IO::StreamReader(fileNameSRCP);
+	System::IO::StreamWriter^ swCurrentPlayer = gcnew System::IO::StreamWriter(fileNameSWCP);
 
+	System::IO::StreamReader^ srRightPlayer = gcnew System::IO::StreamReader(fileNameSRRP);
+	System::IO::StreamWriter^ swRightPlayer = gcnew System::IO::StreamWriter(fileNameSWRP);
+
+	System::IO::StreamReader^ srLeftPlayer = gcnew System::IO::StreamReader(fileNameSRLP);
+	System::IO::StreamWriter^ swLeftPlayer = gcnew System::IO::StreamWriter(fileNameSWLP);
+
+	CheckChipsRollUpdateScores(roundNum, dice, player, srCurrentPlayer, srRightPlayer, srLeftPlayer, swCurrentPlayer, swRightPlayer, swLeftPlayer);
+
+	srCurrentPlayer->Close();
+	srRightPlayer->Close();
+	srLeftPlayer->Close();
+
+	swCurrentPlayer->Close();
+	swRightPlayer->Close();
+	swLeftPlayer->Close();
 }
 
-void Game::CheckChipsRollUpdateScores(int roundNum, Dice^ dice, Player^ player, System::IO::FileInfo^ fiCP, System::IO::FileInfo^ fiRP, System::IO::FileInfo^ fiLP) {
+void Game::CheckChipsRollUpdateScores(int roundNum, Dice^ dice, Player^ player, System::IO::StreamReader^ srCP, System::IO::StreamReader^ srRP, System::IO::StreamReader^ srLP, System::IO::StreamWriter^ swCP, System::IO::StreamWriter^ swRP, System::IO::StreamWriter^ swLP) {
 	
 	System::Console::WriteLine("GAME::CHECKCHIPSROLLUPDATESCORES");
 
@@ -176,7 +194,7 @@ void Game::CheckChipsRollUpdateScores(int roundNum, Dice^ dice, Player^ player, 
 	/// <param name="srLP"></param>
 	
 	// GetChipCountReturnRolls not working... can't find file in directory
-	int rollsCurrentPlayer = GetChipCountReturnRolls(fiCP, player);
+	int rollsCurrentPlayer = GetChipCountReturnRolls(srCP, player);
 	int diceRoll = 0;
 	bool canRoll = (rollsCurrentPlayer > 0);
 
@@ -188,7 +206,7 @@ void Game::CheckChipsRollUpdateScores(int roundNum, Dice^ dice, Player^ player, 
 			diceRoll = dice->Roll();
 			dice->PrintSide(diceRoll);
 			
-			player->ChangeScores(diceRoll, roundNum, fiCP, fiRP,fiLP);
+			player->ChangeScores(diceRoll, roundNum, srCP, srRP, srLP, swCP, swRP, swLP);
 			
 			PauseTurn();
 		}
@@ -206,7 +224,7 @@ void Game::CheckChipsRollUpdateScores(int roundNum, Dice^ dice, Player^ player, 
 
 }
 
-int Game::GetChipCountReturnRolls(System::IO::FileInfo^ fiAffectedPlayer, Player^ player) {
+int Game::GetChipCountReturnRolls(System::IO::StreamReader^ srCP, Player^ player) {
 	/// <summary> 
 	/// reads from file info on current player enters their info into Player class
 	/// returns num rolls based on chip count
@@ -216,7 +234,7 @@ int Game::GetChipCountReturnRolls(System::IO::FileInfo^ fiAffectedPlayer, Player
 	System::Console::WriteLine("GAME::GETCHIPCOUNTRETURNROLLS");
 	int rolls = 0;
 
-	player->ReadInfoFromDirectoryFile(fiAffectedPlayer);
+	player->ReadInfoFromDirectoryFile(srCP);
 
 	rolls = (player->GetChipCount() > 3) ? 3 : player->GetChipCount();
 	return rolls;

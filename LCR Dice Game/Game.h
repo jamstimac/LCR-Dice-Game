@@ -16,8 +16,8 @@ public:
 	void WelcomePlayer();
 	int GetNumPlayers();
 	void GetRightLeftAndCurrentPlayer(Dice^ dice, Player^ player,int roundNum, int currentPlayerNum, int numPlayers);
-	void CheckChipsRollUpdateScores(int roundNum, Dice^ dice, Player^ player, System::IO::FileInfo^ fiCP, System::IO::FileInfo^ fiRP, System::IO::FileInfo^ fiLP);
-	int GetChipCountReturnRolls(System::IO::FileInfo^ fiAffectedPlayer, Player^ player);
+	void CheckChipsRollUpdateScores(int roundNum, Dice^ dice, Player^ player, System::IO::StreamReader^ srCP, System::IO::StreamReader^ srRP, System::IO::StreamReader^ srLP, System::IO::StreamWriter^ swCP, System::IO::StreamWriter^ swRP, System::IO::StreamWriter^ swLP);
+	int GetChipCountReturnRolls(System::IO::StreamReader^ srCP, Player^ player);
 
 	// vairables
 	int roundNum = 0;
