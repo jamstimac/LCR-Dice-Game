@@ -146,8 +146,13 @@ void Player::WriteScoreToFile(int roundNum) {
 	System::Console::WriteLine("Scores saved to file {0}", FINAL_SCORE_FILE_NAME);
 	System::IO::StreamWriter^ swWinner = gcnew System::IO::StreamWriter(FINAL_SCORE_FILE_NAME);
 
-	System::String^ line = ("Nice going! You won LRC <3\n\nRound {0}\n\tName: {2}\n\tScore: {3}\n\n{4}", roundNum, GetPlayerName(), GetChipCount(), hasChips.ToString(),CREDITS);
-	swWinner->WriteLine(line);
+	swWinner->WriteLine("Nice going Name: {0}! You won LRC!", GetPlayerName());
+	swWinner->WriteLine("");
+	swWinner->WriteLine("You playerd {0} round(s)", roundNum);
+	swWinner->WriteLine("Your final score was {0}", GetChipCount());
+	swWinner->WriteLine("");
+	swWinner->WriteLine(CREDITS);
+	
 
 	swWinner->Close();
 
