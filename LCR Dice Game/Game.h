@@ -14,8 +14,8 @@ public:
 	void PauseTurn();
 	void WelcomePlayer();
 	int GetNumPlayers();
-	void GetRightLeftAndCurrentPlayer(Dice^ dice, Player^ player, cli::array<Player^>^ pArray, int roundNum, int currentPlayerNum, int numPlayers);
-	void CheckChipsRollUpdateScores(Dice^ dice, Player^ player, cli::array<Player^>^ pArray, int cpNum, int rpNum, int lpNum);
+	void GetRightLeftAndCurrentPlayer(Dice^ dice, Player^ genPlayer, cli::array<Player^>^ pArray, int currentPlayerNum, int numPlayers);
+	void CheckChipsRollUpdateScores(Dice^ dice, Player^ genPlayer, Player^ cPlayer, Player^ rPlayer, Player^ lPlayer);
 
 	int roundNum = 0;
 	int numRolls;

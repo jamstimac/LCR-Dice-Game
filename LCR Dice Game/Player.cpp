@@ -52,7 +52,7 @@ bool Player::GetHasChips() {
 
 // checks current player nums chips returns up to 3 rolls
 int Player::ReturnNumRolls() {
-	int rolls = GetChipCount() > 3) ? 3 : GetChipCount();
+	int rolls = (GetChipCount() > 3) ? 3 : GetChipCount();
 	return rolls;
 }
 
@@ -61,73 +61,96 @@ void Player::WritePlayersToArray(array<Player^>^ pArray, Player^ player, int pla
 	System::Console::WriteLine("PLAYER::WRITEPLAYERSTOARRAY");
 	for (int i = 0; i < playerNum; i++) {
 		System::Console::WriteLine("\nPlease enter player {0}'s name: ", (i + 1));
+		System::String^ playerName = System::Console::ReadLine();
+		Player^ thisPlayer = gcnew Player(playerName, 3);
 
-		SetPlayerName();
-		EnterChipCount(3);
-		SetHasChips();
+		pArray[i] = thisPlayer;
 
-		pArray[i] = player;
 		System::Console::WriteLine("ChipCount: {0}\nName: {1}\nHasChips: {2}", pArray[i]->GetChipCount(), pArray[i]->GetPlayerName(), pArray[i]->GetHasChips());
 	}
 }
 
 
-// gets current scores, rolls dice, affects score changes
-void Player::ChangeScores(int diceRoll, cli::array<Player^>^ pArray, int cpNum, int rpNum, int lpNum) {
-//	System::Console::WriteLine("PLAYER::CHANGESCORES");
-//	int currentChips = GetChipCount();
-//	
-//	// rolled L
-//	if (diceRoll == 0) {
-//		System::Console::WriteLine("Changing Right Player Chips");
-//		ReadInfoFromDirectoryFile(srLP);
-//		SetChipCount(GetChipCount() + 1);
-//		WriteScoreToFile(swLP, roundNum);
-//		// take one chip from current player chip count
-//		System::Console::WriteLine("Changing Current Player Chips");
-//		ReadInfoFromDirectoryFile(srCP);
-//		currentChips--;
-//		WriteScoreToFile(swCP, roundNum);
-//		// print dice
-//		System::Console::WriteLine("You gave a chip to the left, ");
-//		System::Console::WriteLine("Chip Count now: {0}\n", GetChipCount());
-//	}
-//	// rolled R
-//	else if (diceRoll == 1) {
-//		ReadInfoFromDirectoryFile(srRP);
-//		SetChipCount(GetChipCount() + 1);
-//		WriteScoreToFile(swRP, roundNum);
-//		// take one chip from current player chip count
-//		ReadInfoFromDirectoryFile(srCP);
-//		currentChips--;
-//		WriteScoreToFile(swCP, roundNum);
-//		// print dice
-//		System::Console::WriteLine("You gave a chip to the right, ");
-//		System::Console::WriteLine("Chip Count now: {0}\n", GetChipCount());
-//	}
-//	// rolled C
-//	else if (diceRoll == 2) {
-//		// take one chip from current player chip count
-//		ReadInfoFromDirectoryFile(srCP);
-//		currentChips--;
-//		WriteScoreToFile(swCP, roundNum);
-//		// print dice
-//		System::Console::WriteLine("You gave a chip to the bank, ");
-//		System::Console::WriteLine("Chip Count now: {0}\n", GetChipCount());
-//	}
-//	// rolled * (no change to chip counts)
-//	else {
-//		// print dice
-//		System::Console::WriteLine("You still have {0} chips.\n", GetChipCount());
-//	}
-//}
+// gets current scores, uses diceRoll to set new scores
+void Player::ChangeScores(int diceRoll, Player^ cPlayer, Player^ rPlayer, Player^ lPlayer) {
+	System::Console::WriteLine("PLAYER::CHANGESCORES");
+	
+	// rolled L
+	if (diceRoll == 0) {
+		// print what roll means
+		System::Console::WriteLine("You rolled an 'L'. One of your chips goes to {0}", lPlayer->GetPlayerName());
+		// add chip to Left Player chipCount
+		lPlayer->AddChip();
+		System::Console::WriteLine(lPlayer->GetChipCount());
+		// remove chip from current player chipCount
+		cPlayer->SubtractChip();
+		
+		// print current chip count
+		System::Console::WriteLine("Current chip count: {0}\n", cPlayer->GetChipCount());
+	}
+	// rolled R
+	else if (diceRoll == 1) {
+		// print what roll means
+		System::Console::WriteLine("You rolled an 'R'. One of your chips goes to {0}", rPlayer->GetPlayerName());
+		// add chip to Right Player chipCount
+		rPlayer->AddChip();
+		// remove chip from current player chipCount
+		cPlayer->SubtractChip();
+
+		// print current chip count
+		System::Console::WriteLine("Current chip count: {0}", cPlayer->GetChipCount());
+	}
+	// rolled C
+	else if (diceRoll == 2) {
+		// 
+		System::Console::Write("You rolled a 'C'. ");
+		// remove chip from current player chipCount
+		cPlayer->SubtractChip();
+		
+		System::Console::WriteLine("You gave a chip to the bank, ");
+		System::Console::WriteLine("chip Count now: {0}\n", cPlayer->GetChipCount());
+	}
+	// rolled *
+	else {
+		// no exchange of chips
+		System::Console::WriteLine("You rolled an '*', ");
+		System::Console::WriteLine("You still have {0} chips.\n", cPlayer->GetChipCount());
+	}
+	System::Console::WriteLine("CPlayer: {0}", cPlayer->GetChipCount());
+	System::Console::WriteLine("LPlayer: {0}", lPlayer->GetChipCount());
+	System::Console::WriteLine("RPlayer: {0}", rPlayer->GetChipCount());
+
+}
+
+// runs through player array, returns 1 if one 1 player has chips, 0 to continue play.
+int Player::ReturnEndLoop(cli::array<Player^>^ pArray, int playerNum) {
+	int countHowManyPlayersHaveChips = 0;
+
+	// run through array of players set hasChips, set int count...;
+	for (int i = 0; i < playerNum; i++) {
+		// sets bool
+		pArray[i]->SetHasChips();
+		// checks bool adds to count
+		if (pArray[i]->GetHasChips()) {
+			countHowManyPlayersHaveChips++;
+		}
+	}
+
+	// if only one player has chips
+	if (countHowManyPlayersHaveChips <= 1) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
 
 // takes scores and winner and writes them to save file (functionality can be added later to retrieve save information)
-//void Player::WriteScoreToFile(System::IO::StreamWriter^ swCP, int roundNum) {
-//	System::Console::WriteLine("PLAYER::WRITESCORETOFILE");
-//	int hasChips = (GetHasChips()) ? 1 : 0;
-//	System::String^ line = ("Round {0}\n\tName: {2}\n\tScore: {3}\n\tStill in : {4}\n", roundNum, GetPlayerName(), GetChipCount(), hasChips.ToString());
-//	swCP->WriteLine(line);
-//	
-//
-//}
+void Player::WriteScoreToFile(cli::array<Player^>^ pArray, int winnerNum, int roundNum) {
+	System::Console::WriteLine("PLAYER::WRITESCORETOFILE");
+	System::IO::StreamWriter^ swWinner = gcnew System::IO::StreamWriter(FINAL_SCORE_FILE_NAME);
+
+	System::String^ line = ("Nice going! You won LRC <3\n\nRound {0}\n\tName: {2}\n\tScore: {3}\n\n{4}", roundNum, GetPlayerName(), GetChipCount(), hasChips.ToString(),CREDITS);
+	swWinner->WriteLine(line);
+
+}

@@ -7,3 +7,5 @@
 #define STARTING_NUM_CHIPS_AND_PlAYERS 3
 #define INTRO_FILE_NAME "GameIntro.txt"
 #define FINAL_SCORE_FILE_NAME "Scores.txt"
+
+#define CREDITS "Thank you so much for playing. I hope you enjoyed the program. -James S"

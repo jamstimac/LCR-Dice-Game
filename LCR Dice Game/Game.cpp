@@ -8,7 +8,7 @@ Game::Game() {
 // initializes dice, player and playerArray objects, gets numPlayers, defines array with numPlayer,
 // continues game
 void Game::Play() {
-	// constructor seeds fiand()
+	// constructor seeds srand()
 	Dice^ dice = gcnew Dice();
 	Player^ player = gcnew Player("", 3);
 
@@ -16,6 +16,7 @@ void Game::Play() {
 
 	// function variables
 	int endLoop = 0;
+	int winnerNum;
 
 	// welcome player get numPlayers
 	WelcomePlayer();
@@ -23,8 +24,6 @@ void Game::Play() {
 	playerArray = gcnew cli::array<Player^>(numPlayers);
 
 	player->WritePlayersToArray(playerArray, player, numPlayers);
-
-	System::Console::WriteLine();
 
 	// game loop
 	//		currentPlayer = for loop i num
@@ -34,24 +33,30 @@ void Game::Play() {
 	//		check for winner (
 	//		
 	do {
+		// allows user a second to read results
+		// press enter to continue
+		PauseTurn();
 		// begin new round
 		roundNum++;
 		// game for loop
 		for (int i = 0; i < numPlayers; i++) {
-			int currentPlayer = (i + 1);
-			System::Console::WriteLine("\nPlayer {0}", currentPlayer);
+			System::Console::WriteLine("\nPlayer {0}", (i+1));
 
-			GetRightLeftAndCurrentPlayer(dice, player, playerArray, roundNum, currentPlayer, numPlayers);
-			
+			// gets current players, checks chips, rolls, updates scores
+			GetRightLeftAndCurrentPlayer(dice, player, playerArray, i, numPlayers);
 
+			// check scores
+			endLoop = player->ReturnEndLoop(playerArray, numPlayers);
 
-			// allows user a second to read results
-			// press enter to continue
-			PauseTurn();			
+			// set winner num breaks loop when found
+			if (endLoop != 0) {
+				winnerNum = (i+1);
+				break;
+			}
 		}
-		// check for winner
-		endLoop = 1;
 	} while (endLoop == 0);
+
+	System::Console::WriteLine("Winner {0}", playerArray[winnerNum]->GetPlayerName());
 }
 
 // Initializes numPlayers, then runs a do loop to get a number of players
@@ -80,44 +85,55 @@ int Game::GetNumPlayers() {
 //
 // takes player array returns indexes for current left and right player
 // passes dice and player and array objects to following functions
-void Game::GetRightLeftAndCurrentPlayer(Dice^ dice, Player^ player, cli::array<Player^>^ pArray, int roundNum, int currentPlayerNum, int numPlayers) {
+void Game::GetRightLeftAndCurrentPlayer(Dice^ dice, Player^ player, cli::array<Player^>^ pArray, int currentPlayerNum, int numPlayers) {
 
+	// finds indexes for players affected this set of rolls
 	// example::						      // if 3 players, numbers become:
 	System::Console::WriteLine("GAME::GETRIGHTLEFTANDCURRENTPLAYER");
-	int currentPlayer = (currentPlayerNum);   // 1, 2, 3
+	int currentPlayer = (currentPlayerNum);   // 0, 1, 2
 	System::Console::WriteLine("CurrentPlayer: {0}", currentPlayer);
-	int leftPlayer = (currentPlayerNum - 1);  // 3, 1, 2
-	if (leftPlayer == 0) {
-		leftPlayer = numPlayers;
+	int leftPlayer = (currentPlayerNum - 1);  // 2, 0, 1
+	if (leftPlayer < 0) {
+		leftPlayer = (numPlayers -1);
 	}
 	System::Console::WriteLine("LeftPlayer: {0}", leftPlayer);
-	int rightPlayer = (currentPlayerNum + 1); // 2, 3, 1
-	if (rightPlayer > numPlayers) {
+	int rightPlayer = (currentPlayerNum + 1); // 1, 2, 0
+	if (rightPlayer == numPlayers) {
 		rightPlayer = 1;
 	}
 	System::Console::WriteLine("RightPlayer: {0}", rightPlayer);
 
-	CheckChipsRollUpdateScores(dice, player, pArray, currentPlayer, rightPlayer, leftPlayer);
+	// initialize players based on indexes found above
+	Player^ currentPlayerObj = pArray[currentPlayer];
+	Player^ rightPlayerObj = pArray[rightPlayer];
+	Player^ leftPlayerObj = pArray[leftPlayer];
+	System::Console::WriteLine("Names: 1::{0} 2::{1} 3::{2}", currentPlayerObj->GetPlayerName(), rightPlayerObj->GetPlayerName(), leftPlayerObj->GetPlayerName());
+	
+	CheckChipsRollUpdateScores(dice, player, currentPlayerObj, rightPlayerObj, leftPlayerObj);
 
+	// return and check endLoop int;
 }
 
-void Game::CheckChipsRollUpdateScores(Dice^ dice, Player^ player, cli::array<Player^>^ pArray, int cpNum, int rpNum, int lpNum) {
+void Game::CheckChipsRollUpdateScores(Dice^ dice, Player^ player, Player^ cPlayer, Player^ rPlayer, Player^ lPlayer) {
 	
 	System::Console::WriteLine("GAME::CHECKCHIPSROLLUPDATESCORES");
 
 	int diceRoll = 0;
-	if (pArray[cpNum]->GetHasChips()) {
-		int rollsCurrentPlayer = pArray[cpNum]->ReturnNumRolls();
-		System::Console::WriteLine("\nWelcome {0} You have {1} chips.", pArray[cpNum]->GetPlayerName(), rollsCurrentPlayer);
+	if (cPlayer->GetHasChips()) {
+		int rollsCurrentPlayer = cPlayer->ReturnNumRolls();
+		System::Console::WriteLine("\nWelcome {0} You have {1} chips so you may roll {2} that many times", cPlayer->GetPlayerName(), cPlayer->GetChipCount(), rollsCurrentPlayer);
+		
+		PauseTurn();
 
 		for (int i = 0; i < rollsCurrentPlayer; i++) {
 			System::Console::WriteLine("Roll {0}", (i + 1));
 			diceRoll = dice->Roll();
 			dice->PrintSide(diceRoll);
 
-			//player->ChangeScores(diceRoll, pArray, cpNum, rpNum, rpNum);
+			player->ChangeScores(diceRoll, cPlayer, rPlayer, lPlayer);
 
 			PauseTurn();
+
 		}
 		System::Console::WriteLine("\nTime for the next player to roll.");
 	}
@@ -128,9 +144,6 @@ void Game::CheckChipsRollUpdateScores(Dice^ dice, Player^ player, cli::array<Pla
 		System::Console::WriteLine("Passing dice to next player\n");
 		return;
 	}
-
-
-
 }
 
 

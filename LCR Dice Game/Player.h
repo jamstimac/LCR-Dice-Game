@@ -20,8 +20,9 @@ public:
 	bool GetHasChips();
 	int ReturnNumRolls();
 	void WritePlayersToArray(array<Player^>^ parray, Player^ player, int playernum);
-	void ChangeScores(int diceRollint diceRoll, cli::array<Player^>^ pArray, int cpNum, int rpNum, int lpNum);
-	//void WriteScoreToFile(System::IO::StreamWriter^ swCP, int roundNum);
+	void ChangeScores(int diceRoll, Player^ cPlayer, Player^ rPlayer, Player^ lPlayer);
+	int ReturnEndLoop(cli::array<Player^>^ pArray, int playerNum);
+	void WriteScoreToFile(cli::array<Player^>^ pArray, int winnerNum, int roundNum);
 
 private:
 	System::String^ name;
