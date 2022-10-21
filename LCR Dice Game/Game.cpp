@@ -11,12 +11,12 @@ void Game::Play() {
 	// constructor seeds srand()
 	Dice^ dice = gcnew Dice();
 	Player^ player = gcnew Player("", 3);
+	Player^ winner = gcnew Player("", 0);
 
 	cli::array<Player^>^ playerArray;
 
 	// function variables
 	int endLoop = 0;
-	int winnerNum;
 
 	// welcome player get numPlayers
 	WelcomePlayer();
@@ -49,15 +49,15 @@ void Game::Play() {
 
 			// set winner num breaks loop when found
 			if (endLoop != 0) {
-				winnerNum = i;
+				winner = player->ReturnWinner(playerArray, numPlayers);
 				break;
 			}
 		}
 	} while (endLoop == 0);
 
-	System::Console::WriteLine("Congrats {0}, you are the winner!", playerArray[winnerNum]->GetPlayerName());
+	System::Console::WriteLine("Congrats {0}, you are the winner!", winner->GetPlayerName());
 
-	playerArray[winnerNum]->WriteScoreToFile(roundNum);
+	winner->WriteScoreToFile(roundNum);
 }
 
 // Initializes numPlayers, then runs a do loop to get a number of players

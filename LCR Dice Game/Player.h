@@ -23,6 +23,7 @@ public:
 	void ChangeScores(int diceRoll, Player^ cPlayer, Player^ rPlayer, Player^ lPlayer);
 	int ReturnEndLoop(cli::array<Player^>^ pArray, int playerNum);
 	void WriteScoreToFile(int roundNum);
+	Player^ ReturnWinner(cli::array<Player^>^ pArray, int numPlayers);
 
 private:
 	System::String^ name;

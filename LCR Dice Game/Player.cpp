@@ -143,10 +143,27 @@ int Player::ReturnEndLoop(cli::array<Player^>^ pArray, int playerNum) {
 
 // takes scores and winner and writes them to save file (functionality can be added later to retrieve save information)
 void Player::WriteScoreToFile(int roundNum) {
-	//System::Console::WriteLine("PLAYER::WRITESCORETOFILE");
+	System::Console::WriteLine("Scores saved to file {0}", FINAL_SCORE_FILE_NAME);
 	System::IO::StreamWriter^ swWinner = gcnew System::IO::StreamWriter(FINAL_SCORE_FILE_NAME);
 
 	System::String^ line = ("Nice going! You won LRC <3\n\nRound {0}\n\tName: {2}\n\tScore: {3}\n\n{4}", roundNum, GetPlayerName(), GetChipCount(), hasChips.ToString(),CREDITS);
 	swWinner->WriteLine(line);
 
+	swWinner->Close();
+
+}
+
+// runs through the array and returns the Player obj that has chips
+Player^ Player::ReturnWinner(cli::array<Player^>^ pArray, int numPlayers) {
+	Player^ winner;
+
+	for (int i = 0; i < numPlayers; i++) {
+		// if player with index i has chips
+		// store their name in NameOfWinner
+		if (pArray[i]->GetHasChips()) {
+			winner = pArray[i];
+		}
+	}
+
+	return winner;
 }
