@@ -5,7 +5,7 @@
 
 Dice::Dice() {
 	srand(time(NULL));
-	System::Console::WriteLine("DICE::.CTOR");
+	System::Console::WriteLine("Get ready to roll some dice!\n");
 };
 
 int Dice::Roll() {

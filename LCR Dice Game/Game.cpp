@@ -2,7 +2,7 @@
 #include "Game.h"
 
 Game::Game() {
-	
+	System::Console::WriteLine();
 };
 
 // initializes dice, player and playerArray objects, gets numPlayers, defines array with numPlayer,
@@ -40,8 +40,7 @@ void Game::Play() {
 		roundNum++;
 		// game for loop
 		for (int i = 0; i < numPlayers; i++) {
-			System::Console::WriteLine("\nPlayer {0}", (i+1));
-
+			// i stands for current player num
 			// gets current players, checks chips, rolls, updates scores
 			GetRightLeftAndCurrentPlayer(dice, player, playerArray, i, numPlayers);
 
@@ -50,19 +49,21 @@ void Game::Play() {
 
 			// set winner num breaks loop when found
 			if (endLoop != 0) {
-				winnerNum = (i+1);
+				winnerNum = i;
 				break;
 			}
 		}
 	} while (endLoop == 0);
 
-	System::Console::WriteLine("Winner {0}", playerArray[winnerNum]->GetPlayerName());
+	System::Console::WriteLine("Congrats {0}, you are the winner!", playerArray[winnerNum]->GetPlayerName());
+
+	playerArray[winnerNum]->WriteScoreToFile(roundNum);
 }
 
 // Initializes numPlayers, then runs a do loop to get a number of players
 int Game::GetNumPlayers() {
 
-	System::Console::WriteLine("GAME::GETNUMPLAYERS");
+	//System::Console::WriteLine("GAME::GETNUMPLAYERS");
 	numPlayers = 0;
 
 	System::Console::WriteLine("How many people are playing?");
@@ -89,25 +90,25 @@ void Game::GetRightLeftAndCurrentPlayer(Dice^ dice, Player^ player, cli::array<P
 
 	// finds indexes for players affected this set of rolls
 	// example::						      // if 3 players, numbers become:
-	System::Console::WriteLine("GAME::GETRIGHTLEFTANDCURRENTPLAYER");
+	System::Console::WriteLine("Getting current players...");
 	int currentPlayer = (currentPlayerNum);   // 0, 1, 2
-	System::Console::WriteLine("CurrentPlayer: {0}", currentPlayer);
+	//System::Console::WriteLine("CurrentPlayer: {0}", currentPlayer);
 	int leftPlayer = (currentPlayerNum - 1);  // 2, 0, 1
 	if (leftPlayer < 0) {
 		leftPlayer = (numPlayers -1);
 	}
-	System::Console::WriteLine("LeftPlayer: {0}", leftPlayer);
+	//System::Console::WriteLine("LeftPlayer: {0}", leftPlayer);
 	int rightPlayer = (currentPlayerNum + 1); // 1, 2, 0
 	if (rightPlayer == numPlayers) {
 		rightPlayer = 1;
 	}
-	System::Console::WriteLine("RightPlayer: {0}", rightPlayer);
+	//System::Console::WriteLine("RightPlayer: {0}", rightPlayer);
 
 	// initialize players based on indexes found above
 	Player^ currentPlayerObj = pArray[currentPlayer];
 	Player^ rightPlayerObj = pArray[rightPlayer];
 	Player^ leftPlayerObj = pArray[leftPlayer];
-	System::Console::WriteLine("Names: 1::{0} 2::{1} 3::{2}", currentPlayerObj->GetPlayerName(), rightPlayerObj->GetPlayerName(), leftPlayerObj->GetPlayerName());
+	//System::Console::WriteLine("Names: 1::{0} 2::{1} 3::{2}", currentPlayerObj->GetPlayerName(), rightPlayerObj->GetPlayerName(), leftPlayerObj->GetPlayerName());
 	
 	CheckChipsRollUpdateScores(dice, player, currentPlayerObj, rightPlayerObj, leftPlayerObj);
 
@@ -116,12 +117,12 @@ void Game::GetRightLeftAndCurrentPlayer(Dice^ dice, Player^ player, cli::array<P
 
 void Game::CheckChipsRollUpdateScores(Dice^ dice, Player^ player, Player^ cPlayer, Player^ rPlayer, Player^ lPlayer) {
 	
-	System::Console::WriteLine("GAME::CHECKCHIPSROLLUPDATESCORES");
+	//System::Console::WriteLine("GAME::CHECKCHIPSROLLUPDATESCORES");
 
 	int diceRoll = 0;
 	if (cPlayer->GetHasChips()) {
 		int rollsCurrentPlayer = cPlayer->ReturnNumRolls();
-		System::Console::WriteLine("\nWelcome {0} You have {1} chips so you may roll {2} that many times", cPlayer->GetPlayerName(), cPlayer->GetChipCount(), rollsCurrentPlayer);
+		System::Console::WriteLine("\nWelcome {0} You have {1} chips so you may roll {2} time(s)", cPlayer->GetPlayerName(), cPlayer->GetChipCount(), rollsCurrentPlayer);
 		
 		PauseTurn();
 
@@ -157,7 +158,7 @@ void Game::WelcomePlayer() {
 	/// pulls function design from 
 	/// https://learn.microsoft.com/en-us/cpp/dotnet/file-handling-and-i-o-cpp-cli?view=msvc-170&viewFallbackFrom=vs-2017#read_text
 	/// </summary>
-	System::Console::WriteLine("GAME::WELCOMEPLAYER");
+	//System::Console::WriteLine("GAME::WELCOMEPLAYER");
 
 	try
 	{
@@ -181,6 +182,6 @@ void Game::WelcomePlayer() {
 
 // allows quick use of ReadLine() to pause turn, gives sense of control over dice rolls
 void Game::PauseTurn() {
-	System::Console::WriteLine("\nPress [enter] to continue!");
+	System::Console::WriteLine("\nPress [enter] to continue!\n");
 	System::Console::ReadLine();
 }

@@ -22,7 +22,7 @@ public:
 	void WritePlayersToArray(array<Player^>^ parray, Player^ player, int playernum);
 	void ChangeScores(int diceRoll, Player^ cPlayer, Player^ rPlayer, Player^ lPlayer);
 	int ReturnEndLoop(cli::array<Player^>^ pArray, int playerNum);
-	void WriteScoreToFile(cli::array<Player^>^ pArray, int winnerNum, int roundNum);
+	void WriteScoreToFile(int roundNum);
 
 private:
 	System::String^ name;
